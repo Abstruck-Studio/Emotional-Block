@@ -9,6 +9,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,7 +30,6 @@ public class CapabilityHandler {
 
     @SubscribeEvent
     public static void attachChunkCap(AttachCapabilitiesEvent<LevelChunk> event) {
-
         event.addCapability(ResourceLocation.fromNamespaceAndPath(EmotionalBlock.MOD_ID, "emotion_data"), new ICapabilitySerializable<CompoundTag>() {
             private final ChunkEmotionCapability cap = new ChunkEmotionCapability();
             private final LazyOptional<ChunkEmotionCapability> optional = LazyOptional.of(() -> cap);
@@ -50,18 +50,6 @@ public class CapabilityHandler {
                 return EMOTION_CAP.orEmpty(capability, optional);
             }
         });
-    }
-
-    @SubscribeEvent
-    public static void onWorldSave(LevelEvent.Save event) {
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
-
-        for (ChunkHolder holder : level.getChunkSource().chunkMap) {
-            LevelChunk chunk = holder.getTickingChunk();
-            if (chunk != null) {
-                chunk.setUnsaved(true);
-            }
-        }
     }
 }
 
